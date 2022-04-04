@@ -20,9 +20,16 @@ contract RockPaperScissor {
     Choice public playerTwoRevealedChoice;
 
     uint256 initialRevealTime;
-    
-      
 
+    bool internal locked;
+
+    modifier reentrancyGuard() {
+        require(!locked);
+        locked = true;
+        _;
+        locked = false;
+    }
+    
     modifier enoughFee() {
         require(msg.value >= 1 ether);
         _;
@@ -120,7 +127,7 @@ contract RockPaperScissor {
         return result;
     }
 
-    function pay(Result result) private {
+    function pay(Result result) private reentrancyGuard {
         if (result == Result.PlayerOne) {
             playerOne.transfer(2 ether);
         }
