@@ -4,8 +4,8 @@ pragma solidity 0.8.0;
 contract RockPaperScissor {
 
     uint256 constant public TIMEOUT = 5 minutes;
-    address constant public BOB_ADDRESS = 0xFFE811714ab35360b67eE195acE7C10D93f89D8C;
-    address constant public ALICE_ADDRESS = 0xDA1Abfcb35A0e100e5B42cbfB30184EdcbA10013;
+    address constant public BOB_ADDRESS = 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4;
+    address constant public ALICE_ADDRESS = 0xAb8483F64d9C6d1EcF9b849Ae677dD3315835cb2;
 
     address payable public playerOne;
     address payable public playerTwo;
@@ -22,6 +22,7 @@ contract RockPaperScissor {
     uint256 initialRevealTime;
 
     bool internal locked;
+
 
     modifier reentrancyGuard() {
         require(!locked);
@@ -122,21 +123,23 @@ contract RockPaperScissor {
             result = Result.PlayerTwo;
         }
 
+        address payable addrOne = playerOne;
+        address payable addrTwo = playerTwo;
         restart();
-        pay(result);
+        pay(result, addrOne, addrTwo);
         return result;
     }
 
-    function pay(Result result) private reentrancyGuard {
+    function pay(Result result, address payable playerOneAddr, address payable playerTwoAddr) private reentrancyGuard {
         if (result == Result.PlayerOne) {
-            playerOne.transfer(2 ether);
+            playerOneAddr.transfer(2 ether);
         }
         else if (result == Result.PlayerTwo) {
-            playerTwo.transfer(2 ether);
+            playerTwoAddr.transfer(2 ether);
         }
         else if (result == Result.Draw) {
-            playerOne.transfer(1 ether);
-            playerTwo.transfer(1 ether);
+            playerOneAddr.transfer(1 ether);
+            playerTwoAddr.transfer(1 ether);
         }
     }
 
@@ -153,17 +156,17 @@ contract RockPaperScissor {
     // helper functions
     function getFirstChar(string memory str) private pure returns(uint) {
         bytes1 firstByte = bytes(str)[0];
-        if (firstByte == 0x31) {
-            return 1;
+        if (firstByte == 0x72) { 
+            return 1; // "r" in "rock"
         } 
-        else if (firstByte == 0x32) {
-            return 2;
+        else if (firstByte == 0x70) {
+            return 2; // "p" in "paper"
         } 
-        else if (firstByte == 0x33) {
-            return 3;
+        else if (firstByte == 0x73) {
+            return 3; // "s" in "scissor"
         } 
         else {
-            return 0;
+            return 0; // none
         }
     }
 }
