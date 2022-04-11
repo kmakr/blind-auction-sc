@@ -115,8 +115,8 @@ contract RockPaperScissor {
         }
         else if ((playerOneRevealedChoice == Choice.Rock    && playerTwoRevealedChoice == Choice.Scissors)||
                 (playerOneRevealedChoice == Choice.Paper    && playerTwoRevealedChoice == Choice.Rock)    ||
-                (playerOneRevealedChoice == Choice.Scissors && playerTwoRevealedChoice == Choice.Paper)   ||
-                (playerOneRevealedChoice != Choice.None     && playerTwoRevealedChoice == Choice.None)) {
+                (playerOneRevealedChoice != Choice.None     && playerTwoRevealedChoice == Choice.None)  ||
+                (playerOneRevealedChoice == Choice.Scissors && playerTwoRevealedChoice == Choice.Paper)) {
             result = Result.PlayerOne;
         }
         else {
