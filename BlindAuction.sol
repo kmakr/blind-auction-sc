@@ -3,7 +3,7 @@ pragma solidity 0.8.0;
 
 contract BlindAuction {
 
-    uint256 public constant BID_DURATION = 24 hours;
+    uint256 public constant BID_DURATION = 1 minutes;
     uint256 public constant REVEAL_DURATION = 1 hours;
     uint256 public bidEnd;
     uint256 public revealEnd;
@@ -15,6 +15,12 @@ contract BlindAuction {
         bytes32 hashedBid;
     }
 
+    struct RevealedBid {
+        uint256 size;
+        address bidder;
+    }
+    
+    RevealedBid[] public revealedBids;
     mapping(address => Bid[]) public bids;
     mapping(address => uint256) public refunds;
 
@@ -57,6 +63,7 @@ contract BlindAuction {
 
         require(_secrets.length == bidsLength, "invalid length of secrets");
         require(_bidSizes.length == bidsLength, "invalid length of bid sizes");
+        require(_fakes.length == bidsLength, "invalid length of fakes");
 
         uint256 refundable;
 
@@ -65,15 +72,24 @@ contract BlindAuction {
 
             (uint256 bidSize, bool fake, bytes32 secret) = (_bidSizes[i], _fakes[i], _secrets[i]);
 
+            // different hash value than the commited bid
             if (currentBid.hashedBid != keccak256(abi.encodePacked(bidSize, fake, secret))) {
                 continue;
             }
 
             refundable += currentBid.size;
 
-            if (currentBid.size >= bidSize && !fake && checkBid(msg.sender, bidSize)) {
-                // current highest bid
-                refundable -= bidSize;
+            if (currentBid.size >= bidSize && !fake) {
+                // record real bids
+                revealedBids.push(RevealedBid({
+                    size: currentBid.size,
+                    bidder: msg.sender
+                }));
+
+                if (checkBid(msg.sender, bidSize)) {
+                    // current highest bid
+                    refundable -= bidSize;
+                }
             }
 
 
