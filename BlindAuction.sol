@@ -3,7 +3,7 @@ pragma solidity 0.8.0;
 
 contract BlindAuction {
 
-    uint256 public constant BID_DURATION = 1 minutes;
+    uint256 public constant BID_DURATION = 24 hours;
     uint256 public constant REVEAL_DURATION = 1 hours;
     uint256 public bidEnd;
     uint256 public revealEnd;
