@@ -1,1 +1,1 @@
-# COMP4901W
+# Blind Auction Smart Contract
